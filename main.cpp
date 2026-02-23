@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "GpioHal/gpiofactory.h"
+#include "gpio/gpiofactory.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.loadFromModule("gpio_hal_hello", "Main");
+    engine.loadFromModule("gpio_stmp_demo", "Main");
 
     return app.exec();
 }

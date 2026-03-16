@@ -17,10 +17,10 @@ qt_add_qml_module(appgpio_stmp_demo
     QML_FILES
         Main.qml
         RESOURCES go_fonts/Go-Bold-Italic.ttf go_fonts/Go-Bold.ttf go_fonts/Go-Italic.ttf go_fonts/Go-Medium-Italic.ttf go_fonts/Go-Medium.ttf go_fonts/Go-Regular.ttf go_fonts/README
-        SOURCES gpio/gpiopin.h gpio/gpiopin.cpp
-        SOURCES gpio/igpiopin.h
-        SOURCES gpio/mockgpiopin.h
-        SOURCES gpio/realgpiopin.h gpio/realgpiopin.cpp
+        SOURCES gpio/gpio.h gpio/gpio.cpp
+        SOURCES gpio/igpio.h
+        SOURCES gpio/mockgpio.h
+        SOURCES gpio/realgpio.h gpio/realgpio.cpp
 )
 
 target_include_directories(appgpio_stmp_demo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gpio)

@@ -14,11 +14,11 @@ ApplicationWindow {
         source: Qt.resolvedUrl("go_fonts/Go-Regular.ttf")
     }
 
-    GpioPin {
-        id: gpioPin
+    Gpio {
+        id: gpio1
+        chip: 1
         pin: 14
-        enabled: true
-        status: true
+        value: true
     }
 
     Pane {
@@ -32,19 +32,19 @@ ApplicationWindow {
             spacing: 20
 
             Text {
-                text: "GPIO Pin:" + gpioPin.pin
+                text: "GPIO Pin:" + gpio1.pin
                 font.pixelSize: 24
             }
             Rectangle {
                 width: 150
                 height: 150
                 radius: 75
-                color: gpioPin.status ? "#4ade80" : "#ef4444"
+                color: gpio1.value ? "#4ade80" : "#ef4444"
                 border.color: "black"
                 border.width: 4
                 Text {
                     anchors.centerIn: parent
-                    text: gpioPin.status ? "ON" : "OFF"
+                    text: gpio1.value ? "ON" : "OFF"
                     font.pixelSize: 32
                     color: "white"
                 }
@@ -52,7 +52,12 @@ ApplicationWindow {
             Button {
                 text: "TOGGLE GPIO"
                 font.pixelSize: 18
-                onClicked: gpioPin.status = !gpioPin.status
+                onClicked: gpio1.toggle()
+            }
+            Text {
+                text: "Build type: " + (gpio1.isReal ? "REAL (libgpiod)" : "MOCK")
+                font.pixelSize: 14
+                color: "orange"
             }
         }
     }

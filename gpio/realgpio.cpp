@@ -1,7 +1,6 @@
 #include "realgpio.h"
 #include <QDebug>
 #include <QString>
-#include <system_error>
 
 RealGpio::RealGpio()
 {
@@ -21,70 +20,73 @@ RealGpio::~RealGpio()
 #endif
 }
 
-void RealGpio::setChipNumber(int chip)
+bool RealGpio::setChipNumber(int chip)
 {
-    if (m_chipNumber == chip) return;
+    if (m_chipNumber == chip) return true;
     m_chipNumber = chip;
 
 #ifdef USE_REAL_DEV
-    if (m_pinNumber != 0 && !m_request) {
+    if (m_pinNumber >= 0 && !m_request) {
         openAndRequestLine();
+        if (!m_request) return false;
     }
 #endif
+    return true;
 }
 
-void RealGpio::setPinNumber(int pin)
+bool RealGpio::setPinNumber(int pin)
 {
-    if (pin < 0) return;
+    if (pin < 0) return false;
     unsigned int newPin = static_cast<unsigned int>(pin);
-    if (newPin == m_pinNumber) return;
+    if (newPin == m_pinNumber) return true;
 
     m_pinNumber = newPin;
 
 #ifdef USE_REAL_DEV
     if (m_chipNumber >= 0 && !m_request) {
         openAndRequestLine();
+        if (!m_request) return false;
     }
 #endif
+    return true;
 }
 
-void RealGpio::write(bool value)
+bool RealGpio::write(bool value)
 {
     m_currentValue = value;
 #ifdef USE_REAL_DEV
     if (!m_request) {
-        if (m_chipNumber >= 0 && m_pinNumber != 0) {
+        if (m_chipNumber >= 0 && m_pinNumber >= 0) {
             openAndRequestLine();
         }
         if (!m_request) {
             qWarning() << "RealGpio: Cannot write - chip and pin not ready yet";
-            return;
+            return false;
         }
     }
     enum gpiod_line_value val = value ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE;
     int ret = gpiod_line_request_set_value(m_request, m_pinNumber, val);
     if (ret < 0) {
         qWarning() << "Failed to set GPIO" << m_chipNumber << "/" << m_pinNumber;
+        return false;
     }
-#else
-    qWarning() << "RealGpio::write() called but compiled without USE_REAL_DEV";
 #endif
+    return true;
 }
 
-bool RealGpio::read() const
+std::optional<bool> RealGpio::read() const
 {
 #ifdef USE_REAL_DEV
     if (m_request) {
         int val = gpiod_line_request_get_value(m_request, m_pinNumber);
         if (val < 0) {
             qWarning() << "Failed to read GPIO" << m_chipNumber << "/" << m_pinNumber;
-            return false;
+            return {};
         }
         return val == GPIOD_LINE_VALUE_ACTIVE;
-    }
-#endif
-    return m_currentValue;
+    } else return {};
 }
+#endif
 
 void RealGpio::openAndRequestLine()
 {

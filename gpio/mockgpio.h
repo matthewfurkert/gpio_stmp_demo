@@ -1,13 +1,14 @@
 #ifndef MOCKGPIO_H
 #define MOCKGPIO_H
+
 #include "igpio.h"
 
 class MockGpio : public IGpio {
 public:
-    void setChipNumber(int chip) override { m_chip = chip; }
-    void setPinNumber(int pin) override { m_pin = pin; }
-    void write(bool value) override { m_value = value; }
-    bool read() const override { return m_value; }
+    bool setChipNumber(int chip) override { m_chip = chip; return true;}
+    bool setPinNumber(int pin) override { m_pin = pin; return true;}
+    bool write(bool value) override { m_value = value; return true;}
+    std::optional<bool> read() const override { return m_value; }
 
 
 private:

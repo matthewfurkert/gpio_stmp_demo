@@ -28,15 +28,25 @@ void Gpio::createBackend()
     if (m_backend) return;
 
 #ifdef USE_REAL_DEV
-    m_backend = std::make_unique<RealGpio>();
+    auto backend = std::make_unique<RealGpio>();
 #else
-    m_backend = std::make_unique<MockGpio>();
+    auto backend = std::make_unique<MockGpio>();
 #endif
 
     // Sync the full current state to the new backend
-    m_backend->setChipNumber(m_chip);
-    m_backend->setPinNumber(m_pin);
-    m_backend->write(m_value);
+    if (!backend->setChipNumber(m_chip)) {
+        qWarning() << "Failed to set GPIO chip number: " << m_chip;
+        return;
+    }
+    if (!backend->setPinNumber(m_pin)) {
+        qWarning() << "Failed to set GPIO pin number: " << m_pin;
+        return;
+    }
+    if (!backend->write(m_value)) {
+        qWarning() << "Failed to write GPIO value: " << m_value;
+        return;
+    }
+    m_backend = std::move(backend);
 }
 
 
@@ -50,7 +60,7 @@ void Gpio::setChip(int chip)
 {
     if (chip == m_chip) return;
     if (chip < 0 || chip > 9) {
-        qWarning() << "Invalid GPIO chip (must be 0-9):" << chip;
+        qWarning() << "Invalid GPIO chip (must be 0-9): " << chip;
         return;
     }
 
@@ -60,10 +70,12 @@ void Gpio::setChip(int chip)
         createBackend();
     }
     if (m_backend) {
-        m_backend->setChipNumber(chip);
+        if (m_backend->setChipNumber(chip)) {
+            emit chipChanged();
+        } else {
+            qWarning() << "Failed to set GPIO chip number: " << m_chip;
+        }
     }
-
-    emit chipChanged();
 }
 
 void Gpio::setPin(int pin)
@@ -80,15 +92,18 @@ void Gpio::setPin(int pin)
         createBackend();
     }
     if (m_backend) {
-        m_backend->setPinNumber(pin);
+        if (m_backend->setPinNumber(pin)) {
+            emit pinChanged();
+        } else {
+            qWarning() << "Failed to set GPIO pin number: " << m_pin;
+        }
     }
-
-    emit pinChanged();
 }
 
 void Gpio::setValue(bool value)
 {
     if (m_value == value) return;
+
     m_value = value;
 
     // Create backend if both chip and pin are already configured
@@ -97,10 +112,12 @@ void Gpio::setValue(bool value)
     }
 
     if (m_backend) {
-        m_backend->write(value);
+        if (m_backend->write(value)) {
+            emit valueChanged();
+        } else {
+            qWarning() << "Failed to write GPIO value: " << m_value;
+        }
     } else {
-        qWarning() << "Cannot write value — backend not ready (chip and pin must be set first)";
+        qWarning() << "Cannot write value — backend not set up";
     }
-
-    emit valueChanged();
 }

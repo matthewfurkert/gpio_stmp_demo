@@ -13,10 +13,10 @@ public:
     explicit RealGpio();
     ~RealGpio() override;
 
-    void setChipNumber(int chip) override;
-    void setPinNumber(int pin) override;
-    void write(bool value) override;
-    bool read() const override;
+    bool setChipNumber(int chip) override;
+    bool setPinNumber(int pin) override;
+    bool write(bool value) override;
+    std::optional<bool> read() const override;
 
 private:
     void openAndRequestLine();

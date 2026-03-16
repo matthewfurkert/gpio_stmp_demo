@@ -26,7 +26,7 @@ qt_add_qml_module(appgpio_stmp_demo
 target_include_directories(appgpio_stmp_demo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gpio)
 
 # Optional: real GPIO (libgpiod) - off by default for easy desktop build
-option(USE_REAL_DEV "Use real device (requires libgpiod-dev)" OFF)
+option(USE_REAL_DEV "Use real device (requires libgpiod-dev)" ON)
 
 if(USE_REAL_DEV)
     find_package(PkgConfig REQUIRED)

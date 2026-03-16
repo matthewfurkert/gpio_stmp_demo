@@ -18,7 +18,7 @@ ApplicationWindow {
         id: gpio1
         chip: 0
         pin: 14
-        value: true
+        value: false
     }
 
     Pane {

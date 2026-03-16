@@ -23,7 +23,6 @@ public:
     int chip() const;
     int pin() const;
     bool value() const;
-
     Q_INVOKABLE void toggle() { setValue(!value()); }
 
 public slots:

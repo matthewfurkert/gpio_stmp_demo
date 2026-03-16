@@ -47,14 +47,23 @@ void Gpio::createBackend()
         qWarning() << "Failed to write GPIO value: " << m_value;
         return;
     }
-
 }
-
 
 // ============== Getters ==============
 int Gpio::chip() const { return m_chip; }
 int Gpio::pin() const  { return m_pin; }
-bool Gpio::value() const { return m_value; }
+bool Gpio::value() const
+{
+    if (m_backend) {
+        if (auto val = m_backend->read(); val.has_value()) {
+            return val.value();
+        }
+    }
+    qWarning().nospace() << "Gpio::value() read failed (chip=" << m_chip
+        << ", pin=" << m_pin << ") → using cached value: " << m_value;
+
+    return m_value;
+}
 
 // ============== Setters ==============
 void Gpio::setChip(int chip)

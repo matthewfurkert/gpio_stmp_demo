@@ -16,7 +16,7 @@ ApplicationWindow {
 
     Gpio {
         id: gpio1
-        chip: 1
+        chip: 0
         pin: 14
         value: true
     }

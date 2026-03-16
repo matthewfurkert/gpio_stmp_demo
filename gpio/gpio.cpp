@@ -42,11 +42,12 @@ void Gpio::createBackend()
         qWarning() << "Failed to set GPIO pin number: " << m_pin;
         return;
     }
-    if (!backend->write(m_value)) {
+    m_backend = std::move(backend);
+    if (!m_backend->write(m_value)) {
         qWarning() << "Failed to write GPIO value: " << m_value;
         return;
     }
-    m_backend = std::move(backend);
+
 }
 
 

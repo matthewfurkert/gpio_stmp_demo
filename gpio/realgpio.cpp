@@ -1,6 +1,7 @@
 #include "realgpio.h"
 #include <QDebug>
 #include <QString>
+#include <cstring>
 
 RealGpio::RealGpio()
 {
@@ -66,11 +67,12 @@ bool RealGpio::write(bool value)
         }
     }
 
-    // IMPORTANT: offset inside request is ALWAYS 0 (1 line requested)
-    int ret = gpiod_line_request_set_value(m_request, 0,
+    unsigned int offset = static_cast<unsigned int>(m_pinNumber);
+    int ret = gpiod_line_request_set_value(m_request, offset,
                                            value ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE);
     if (ret < 0) {
-        qWarning() << "Failed to set GPIO" << m_chipNumber << "/" << m_pinNumber;
+        qWarning() << "Failed to set GPIO" << m_chipNumber << "/" << m_pinNumber
+                   << "- error:" << strerror(errno);
         return false;
     }
     return true;
@@ -83,9 +85,11 @@ std::optional<bool> RealGpio::read() const
     if (!m_request)
         return {};
 
-    int val = gpiod_line_request_get_value(m_request, 0);  // always offset 0
+    unsigned int offset = static_cast<unsigned int>(m_pinNumber);
+    int val = gpiod_line_request_get_value(m_request, offset);
     if (val < 0) {
-        qWarning() << "Failed to read GPIO" << m_chipNumber << "/" << m_pinNumber;
+        qWarning() << "Failed to read GPIO" << m_chipNumber << "/" << m_pinNumber
+                   << "- error:" << strerror(errno);
         return {};
     }
     return val == GPIOD_LINE_VALUE_ACTIVE;

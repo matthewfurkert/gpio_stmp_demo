@@ -37,31 +37,31 @@ bool LightShow::isRunning() const
     return m_running;
 }
 
-void LightShow::setRedGpio(Gpio* gpio)
+void LightShow::setLight1(Gpio* gpio)
 {
-    if (m_red == gpio) return;
-    m_red = gpio;
-    emit redGpioChanged();
+    if (m_light1 == gpio) return;
+    m_light1 = gpio;
+    emit light1Changed();
 }
 
-void LightShow::setOrangeGpio(Gpio* gpio)
+void LightShow::setLight2(Gpio* gpio)
 {
-    if (m_orange == gpio) return;
-    m_orange = gpio;
-    emit orangeGpioChanged();
+    if (m_light2 == gpio) return;
+    m_light2 = gpio;
+    emit light2Changed();
 }
 
-void LightShow::setGreenGpio(Gpio* gpio)
+void LightShow::setLight3(Gpio* gpio)
 {
-    if (m_green == gpio) return;
-    m_green = gpio;
-    emit greenGpioChanged();
+    if (m_light3 == gpio) return;
+    m_light3 = gpio;
+    emit light3Changed();
 }
 
 void LightShow::start()
 {
-    if (!m_red || !m_orange || !m_green) {
-        qWarning() << "LightShow::start() failed — all three GPIOs (red/orange/green) must be assigned!";
+    if (!m_light1 || !m_light2 || !m_light3) {
+        qWarning() << "LightShow::start() failed — all three GPIOs (light1/light2/light3) must be assigned!";
         return;
     }
     m_currentStep = 0;
@@ -75,20 +75,20 @@ void LightShow::stop()
     m_timer.stop();
     m_running = false;
     emit runningChanged();
-    if (m_red)    m_red->setValue(false);
-    if (m_orange) m_orange->setValue(false);
-    if (m_green)  m_green->setValue(false);
+    if (m_light1) m_light1->setValue(false);
+    if (m_light2) m_light2->setValue(false);
+    if (m_light3) m_light3->setValue(false);
 }
 
 void LightShow::nextStep()
 {
-    if (!m_red || !m_orange || !m_green || m_pattern.empty()) return;
+    if (!m_light1 || !m_light2 || !m_light3 || m_pattern.empty()) return;
 
     const Step& step = m_pattern[m_currentStep];
 
-    m_red->setValue(step.red);
-    m_orange->setValue(step.orange);
-    m_green->setValue(step.green);
+    m_light1->setValue(step.firstLight);
+    m_light2->setValue(step.secondLight);
+    m_light3->setValue(step.thirdLight);
 
     m_timer.start(step.durationMs);
     m_currentStep = (m_currentStep + 1) % m_pattern.size();

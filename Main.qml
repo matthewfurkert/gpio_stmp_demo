@@ -23,8 +23,8 @@ ApplicationWindow {
     Gpio {id: gpioOrange; chip: 5; pin: 6; value: false}
     Gpio {id: gpioGreen; chip: 5; pin: 3; value: false}
 
-    LightShow { id: lightShow; redGpio: gpioRed
-        orangeGpio: gpioOrange; greenGpio:  gpioGreen }
+    LightShow { id: lightShow; light1: gpioRed
+        light2: gpioOrange; light3:  gpioGreen }
 
     Pane {
         anchors.centerIn: parent

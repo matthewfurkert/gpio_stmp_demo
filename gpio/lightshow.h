@@ -13,9 +13,9 @@ class LightShow : public QObject
     Q_OBJECT
     QML_ELEMENT
     Q_PROPERTY(bool running READ isRunning NOTIFY runningChanged)
-    Q_PROPERTY(Gpio* redGpio    READ redGpio    WRITE setRedGpio    NOTIFY redGpioChanged)
-    Q_PROPERTY(Gpio* orangeGpio READ orangeGpio WRITE setOrangeGpio NOTIFY orangeGpioChanged)
-    Q_PROPERTY(Gpio* greenGpio  READ greenGpio  WRITE setGreenGpio  NOTIFY greenGpioChanged)
+    Q_PROPERTY(Gpio* light1 READ light1 WRITE setLight1 NOTIFY light1Changed)
+    Q_PROPERTY(Gpio* light2 READ light2 WRITE setLight2 NOTIFY light2Changed)
+    Q_PROPERTY(Gpio* light3 READ light3 WRITE setLight3 NOTIFY light3Changed)
 
 public:
     explicit LightShow(QObject* parent = nullptr);
@@ -25,35 +25,35 @@ public:
     Q_INVOKABLE void stop();
     bool isRunning() const;
 
-    Gpio* redGpio() const { return m_red; }
-    Gpio* orangeGpio() const { return m_orange; }
-    Gpio* greenGpio() const { return m_green; }
+    Gpio* light1() const { return m_light1; }
+    Gpio* light2() const { return m_light2; }
+    Gpio* light3() const { return m_light3; }
 
 public slots:
-    void setRedGpio(Gpio* gpio);
-    void setOrangeGpio(Gpio* gpio);
-    void setGreenGpio(Gpio* gpio);
+    void setLight1(Gpio* gpio);
+    void setLight2(Gpio* gpio);
+    void setLight3(Gpio* gpio);
 
 signals:
     void runningChanged();
-    void redGpioChanged();
-    void orangeGpioChanged();
-    void greenGpioChanged();
+    void light1Changed();
+    void light2Changed();
+    void light3Changed();
 
 private slots:
     void nextStep();
 
 private:
     bool m_running = false;
-    Gpio* m_red    = nullptr;
-    Gpio* m_orange = nullptr;
-    Gpio* m_green  = nullptr;
+    Gpio* m_light1    = nullptr;
+    Gpio* m_light2 = nullptr;
+    Gpio* m_light3  = nullptr;
 
     QTimer m_timer;
     size_t m_currentStep = 0;
 
     struct Step {
-        bool red, orange, green;
+        bool firstLight, secondLight, thirdLight;
         int durationMs;
     };
 

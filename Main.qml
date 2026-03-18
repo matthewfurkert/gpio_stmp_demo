@@ -104,12 +104,8 @@ ApplicationWindow {
                         id: boardLed
                         scale: 3
                         Layout.alignment: Qt.AlignHCenter
-                        checked: gpioBoard.value
-                        onCheckedChanged: {
-                            if (!checked) {
-                                gpioBoard.toggle()
-                            }
-                        }
+                        checked: !gpioBoard.value
+                        onCheckedChanged: gpioBoard.value = !checked
                     }
                 }
                 ColumnLayout {

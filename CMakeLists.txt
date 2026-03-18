@@ -21,6 +21,7 @@ qt_add_qml_module(appgpio_stmp_demo
         SOURCES gpio/igpio.h
         SOURCES gpio/mockgpio.h
         SOURCES gpio/realgpio.h gpio/realgpio.cpp
+        SOURCES gpio/lightshow.h gpio/lightshow.cpp
 )
 
 target_include_directories(appgpio_stmp_demo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gpio)

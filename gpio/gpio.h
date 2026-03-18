@@ -1,8 +1,7 @@
 #ifndef GPIO_H
 #define GPIO_H
 #include <QObject>
-#include <qqmlintegration.h>
-#include <QtQml/qqmlregistration.h>
+#include <QtQml>
 #include <memory>
 #include "igpio.h"
 

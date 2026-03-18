@@ -23,8 +23,11 @@ ApplicationWindow {
     Gpio {id: gpioOrange; chip: 5; pin: 6; value: false}
     Gpio {id: gpioGreen; chip: 5; pin: 3; value: false}
 
+    LightShow { id: lightShow; redGpio: gpioRed
+        orangeGpio: gpioOrange; greenGpio:  gpioGreen }
+
     Pane {
-        anchors.fill: parent
+        anchors.centerIn: parent
         width: embeddedDev ? window.height : window.width
         height: embeddedDev ? window.width : window.height
         rotation: embeddedDev ? 270 : 0
@@ -41,7 +44,10 @@ ApplicationWindow {
             CheckBox {
                 id: checkRed
                 checked: gpioRed.value
-                onClicked: gpioRed.toggle()
+                onClicked: {
+                        if (lightShow.running) { lightShow.stop(); showButton.text = "Light Show" }
+                        gpioRed.toggle()
+                    }
                 indicator: Rectangle {
                     implicitWidth: 72; implicitHeight: 72; radius: 6
                     border.color: "red"
@@ -56,7 +62,10 @@ ApplicationWindow {
             CheckBox {
                 id: checkOrange
                 checked: gpioOrange.value
-                onClicked: gpioOrange.toggle()
+                onClicked: {
+                        if (lightShow.running) { lightShow.stop(); showButton.text = "Light Show" }
+                        gpioOrange.toggle()
+                    }
                 indicator: Rectangle {
                     implicitWidth: 72; implicitHeight: 72; radius: 6
                     border.color: "orange"
@@ -71,7 +80,10 @@ ApplicationWindow {
             CheckBox {
                 id: checkGreen
                 checked: gpioGreen.value
-                onClicked: gpioGreen.toggle()
+                onClicked: {
+                        if (lightShow.running) { lightShow.stop(); showButton.text = "Light Show" }
+                        gpioGreen.toggle()
+                    }
                 indicator: Rectangle {
                     implicitWidth: 72; implicitHeight: 72; radius: 6
                     border.color: "green"
@@ -124,26 +136,18 @@ ApplicationWindow {
                 }
             }
             Button {
-                id: lightShowButton
-                text: qsTr("Light Show")
+                id: showButton
                 Layout.alignment: Qt.AlignHCenter
-
-                font.pixelSize: 26
-                font.bold: true
-                padding: 22
+                text: qsTr("Light Show")
+                font.pixelSize: 26; font.bold: true
 
                 background: Rectangle {
-                    implicitWidth: 280
-                    implicitHeight: 85
-                    radius: 16
-                    color: enabled ? (parent.down ? "#1e40af" : "#2563eb") : "#94a3b8"
-                    border.color: "#1e40af"
-                    border.width: 3
+                    implicitWidth: 280; implicitHeight: 85; radius: 16
+                    color: "purple"; border.color: "brown"; border.width: 3
                 }
 
                 contentItem: Text {
-                    text: parent.text
-                    font: parent.font
+                    text: parent.text; font: parent.font
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -151,10 +155,9 @@ ApplicationWindow {
 
                 onClicked: {
                     if (text === "Light Show") {
-                        // boardLed.on
-                        text = "Stop Show"
+                        lightShow.start(); text = "Stop Show"
                     } else {
-                        text = "Light Show"
+                        lightShow.stop(); text = "Light Show"
                     }
                 }
             }
